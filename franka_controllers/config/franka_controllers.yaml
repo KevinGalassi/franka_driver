@@ -1,0 +1,28 @@
+joint_velocity_controller:
+    type: franka_robot_controllers/JointVelocityController
+    arm_id: panda
+    joint_names:
+        - panda_joint1
+        - panda_joint2
+        - panda_joint3
+        - panda_joint4
+        - panda_joint5
+        - panda_joint6
+        - panda_joint7
+
+cartesian_velocity_controller:
+    type: franka_robot_controllers/CartesianVelocityController
+    arm_id: panda
+
+state_publisher:
+    type: franka_robot_controllers/StatePublisher
+    arm_id: panda
+    joint_names:
+        - panda_joint1
+        - panda_joint2
+        - panda_joint3
+        - panda_joint4
+        - panda_joint5
+        - panda_joint6
+        - panda_joint7
+
