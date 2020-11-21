@@ -50,8 +50,6 @@ add_library(${PROJECT_NAME}
   src/cartesian_velocity_controller.cpp
 )
 
-
-
 add_dependencies(${PROJECT_NAME}
   ${${PROJECT_NAME}_EXPORTED_TARGETS}
   ${catkin_EXPORTED_TARGETS}
@@ -72,8 +70,25 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   ${catkin_INCLUDE_DIRS}
 )
 
+
+
+## franka_control_node
+add_executable(franka_control_node src/franka_control_node.cpp)
+target_link_libraries(franka_control_node
+  ${Franka_LIBRARIES}
+  ${catkin_LIBRARIES}
+)
+
+target_include_directories(franka_control_node SYSTEM PUBLIC
+  ${Franka_INCLUDE_DIRS}
+  ${catkin_INCLUDE_DIRS}
+)
+
+
+
 ## Installation
 install(TARGETS ${PROJECT_NAME}
+                franka_control_node
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -102,7 +117,7 @@ if(CLANG_TOOLS)
   add_format_target(${PROJECT_NAME} FILES ${SOURCES} ${HEADERS})
   add_tidy_target(${PROJECT_NAME}
     FILES ${SOURCES}
-    DEPENDS ${PROJECT_NAME}
+    DEPENDS ${PROJECT_NAME} franka_control_node
   )
 endif()
 

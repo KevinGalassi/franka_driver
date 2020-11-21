@@ -1,0 +1,43 @@
+<?xml version="1.0" ?>
+
+<launch>
+
+  <arg name="robot_ip" value="172.16.0.2"/>
+  <arg name="load_gripper" value="true" />
+  <arg name="rviz_tutorial" default="false" />
+  <arg name="use_gui" default="false" />
+  <arg name="debug" default="false" />
+
+
+<!-- Launch the state publisher-->
+  <include file="$(find franka_controllers)/launch/franka_control.launch">
+     <arg name="robot_ip" value="$(arg robot_ip)" />
+     <arg name="load_gripper" value="$(arg load_gripper)" /> 
+  </include>
+
+<!-- Launch the RViz -->
+  <include file="$(find panda_moveit)/launch/moveit_rviz.launch">
+    <arg name="rviz_tutorial" value="$(arg rviz_tutorial)"/>
+    <arg name="debug" value="$(arg debug)"/>
+  </include>
+
+<!-- Load all the desired controllers -->
+  <rosparam command="load" file="$(find franka_controllers)/config/franka_controllers.yaml" />
+  <node name="controller_spawner_vel" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args=" --stopped joint_velocity_controller"/>
+
+  <rosparam command="load" file="$(find franka_controllers)/config/franka_controllers.yaml" />
+  <node name="controller_spawner_pos" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args=" --stopped joint_position_controller"/>
+
+<!-- Load MoveIt with pos_joint_trajectory_controller (ALWAYS LAUNCHED AS ACTIVE) -->
+  <include file="$(find panda_moveit)/launch/panda_moveit.launch">
+    <arg name="load_gripper" value="$(arg load_gripper)" />
+  </include>
+
+
+  <node pkg="tf2_ros" type="static_transform_publisher" name="virtual_joint_broadcaster_1" args="0 0 0 0 0 0 world panda_link0" >
+    <param name="rate" value="1000"/>
+  </node>
+
+
+</launch>
+

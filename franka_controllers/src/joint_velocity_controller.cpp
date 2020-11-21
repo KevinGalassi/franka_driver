@@ -21,7 +21,6 @@
 #include <tf/tf.h>
 #include <tf/transform_datatypes.h>
 
-#include "pseudo_inversion.h"
 
 namespace franka_robot_controllers{
 
@@ -30,8 +29,7 @@ bool JointVelocityController::init(hardware_interface::RobotHW* robot_hardware,
 
   velocity_joint_interface = robot_hardware->get<hardware_interface::VelocityJointInterface>();
   if (velocity_joint_interface == nullptr) {
-    ROS_ERROR(
-        "JointVelocityController: Error getting velocity joint interface from hardware!");
+    ROS_ERROR("JointVelocityController: Error getting velocity joint interface from hardware!");
     return false;
   }
   std::vector<std::string> joint_names;
@@ -48,8 +46,7 @@ bool JointVelocityController::init(hardware_interface::RobotHW* robot_hardware,
     try {
       velocity_joint_handles[i] = velocity_joint_interface->getHandle(joint_names[i]);
     } catch (const hardware_interface::HardwareInterfaceException& ex) {
-      ROS_ERROR_STREAM(
-          "JointVelocityController: Exception getting joint handles: " << ex.what());
+      ROS_ERROR_STREAM("JointVelocityController: Exception getting joint handles: " << ex.what());
       return false;
     }
   }
@@ -77,6 +74,7 @@ void JointVelocityController::starting(const ros::Time& time ) {
     joint_velocity(i) = 0;
 
   elapsed_time = ros::Duration(0.0);
+  vel_cmd_timeout = 0.1;
 
   ROS_INFO("STARTING COMPLETED");
 
@@ -87,11 +85,20 @@ void JointVelocityController::update(const ros::Time& time, const ros::Duration&
   
   elapsed_time += period;
 
-  if (trigger_publish())
+  
+
+  if(ros::Time::now().toSec() - last_cmd_time > vel_cmd_timeout)
+  {
+    for(int i=0; i<7; i++)
+      velocity_joint_handles[i].setCommand(0.00);
+    // ROS_INFO("JointVelocityController: Not receiveing any command, set the velocity to 0!");
+  }
+  else
   {
     for(int i=0;i<7;i++)
-      velocity_joint_handles[i].setCommand(joint_velocity(i));
+      velocity_joint_handles[i].setCommand(joint_velocity(i));  
   }
+  
 }
 
 void JointVelocityController::stopping(const ros::Time& /*time*/) {
@@ -102,8 +109,16 @@ void JointVelocityController::stopping(const ros::Time& /*time*/) {
 
 void JointVelocityController::Velocity_callback(const std_msgs::Float32MultiArray& msg)
 {
+  if(msg.data.size() != 7)
+  {
+    ROS_ERROR("JointVelocityController: Joint velocity request not consistence! :(")
+  }
+  else
+  {
     for(int i=0; i<7;i++)
       joint_velocity(i) = (double)msg.data[i]; 
+  }
+  last_cmd_time = ros::Time::now().toSec();
 }
 
 }  // namespace my_franka_velocity_controller

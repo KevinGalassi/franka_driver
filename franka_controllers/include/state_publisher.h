@@ -79,7 +79,7 @@ class StatePublisher : public controller_interface::MultiInterfaceController<
   realtime_tools::RealtimePublisher<geometry_msgs::WrenchStamped> publisher_external_force_;
   realtime_tools::RealtimePublisher<geometry_msgs::WrenchStamped> publisher_external_force_filter_;  
 
-  int publish_rate;
+  double publish_rate;
   franka_hw::TriggerRate trigger_publish;
   
   franka::RobotState robot_state_;

@@ -16,6 +16,14 @@
     </description>
   </class>
 
+  <class name="franka_robot_controllers/JointPositionController"
+         type="franka_robot_controllers::JointPositionController"
+         base_class_type="controller_interface::ControllerBase">
+    <description>
+      Franka robot joint position controller 
+    </description>
+  </class>
+
   <class name="franka_robot_controllers/StatePublisher"
          type="franka_robot_controllers/StatePublisher"
          base_class_type="controller_Interface::ControllerBase">

@@ -10,17 +10,13 @@
 
 #include <franka_hw/franka_state_interface.h>
 #include <franka_hw/trigger_rate.h>
-#include <franka_hw/franka_model_interface.h>
 #include <franka_hw/franka_state_interface.h>
 #include <franka_msgs/FrankaState.h>
 
 #include <hardware_interface/joint_command_interface.h>
 #include <hardware_interface/robot_hw.h>
 
-#include <geometry_msgs/WrenchStamped.h>
-#include <realtime_tools/realtime_publisher.h>
-#include <sensor_msgs/JointState.h>
-#include <tf2_msgs/TFMessage.h>
+
 
 #include <std_msgs/Float32MultiArray.h>
 
@@ -48,10 +44,12 @@ namespace franka_robot_controllers
     std::vector<hardware_interface::JointHandle> velocity_joint_handles;
     ros::Duration elapsed_time;
     
-    int publish_rate;
+    double publish_rate;
     franka_hw::TriggerRate trigger_publish;
 
     ros::Subscriber vel_cmd_sub;
+    double last_cmd_time;
+
     void Velocity_callback(const std_msgs::Float32MultiArray &msg);
     
     Eigen::Matrix<double, 7, 1> joint_velocity;

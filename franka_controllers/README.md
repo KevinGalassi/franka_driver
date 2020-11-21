@@ -23,3 +23,9 @@ The message to publish is ALWAYS a std_msgs::Float32MultiArray
 5)Enjoy your new controller and hope that it's work correctly!
 
 
+### How can i launch my controller? ###
+
+Use controller.launch!, this will enable the franka to be controller through several differents types of interface. Firstly, it load the state publisher and the RViz interface, then load all the controllers selected.
+By default, the only controller that is active is the joint's position controller loaded by MoveIt, but calling the service /controll_manager/switch_Controlelr your are able to choose the controller you may prefer.
+You can also create your own .launch file with the controller you prefer!
+
