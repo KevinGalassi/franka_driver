@@ -111,7 +111,7 @@ void JointVelocityController::Velocity_callback(const std_msgs::Float32MultiArra
 {
   if(msg.data.size() != 7)
   {
-    ROS_ERROR("JointVelocityController: Joint velocity request not consistence! :(")
+    ROS_ERROR("JointVelocityController: Joint velocity request not consistence! :( ");
   }
   else
   {

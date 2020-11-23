@@ -49,6 +49,7 @@ namespace franka_robot_controllers
 
     ros::Subscriber vel_cmd_sub;
     double last_cmd_time;
+    double vel_cmd_timeout;
 
     void Velocity_callback(const std_msgs::Float32MultiArray &msg);
     

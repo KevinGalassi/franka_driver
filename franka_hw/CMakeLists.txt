@@ -88,9 +88,6 @@ target_include_directories(franka_control_services PUBLIC
   include
 )
 
-if(CATKIN_ENABLE_TESTING)
-  add_subdirectory(test)
-endif()
 
 ## Installation
 install(TARGETS franka_hw franka_control_services
