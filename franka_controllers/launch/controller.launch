@@ -10,7 +10,7 @@
 
 
 <!-- Launch the state publisher-->
-  <include file="$(find franka_controllers)/launch/franka_control.launch">
+  <include file="$(find franka_control)/launch/franka_control.launch">
      <arg name="robot_ip" value="$(arg robot_ip)" />
      <arg name="load_gripper" value="$(arg load_gripper)" /> 
   </include>
