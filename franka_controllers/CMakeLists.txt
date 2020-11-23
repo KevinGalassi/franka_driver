@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(catkin REQUIRED COMPONENTS
   controller_interface
+  controller_manager
   dynamic_reconfigure
   eigen_conversions
   franka_hw
@@ -50,6 +51,7 @@ add_library(${PROJECT_NAME}
   src/cartesian_velocity_controller.cpp
 )
 
+
 add_dependencies(${PROJECT_NAME}
   ${${PROJECT_NAME}_EXPORTED_TARGETS}
   ${catkin_EXPORTED_TARGETS}
@@ -73,12 +75,16 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 
 
 ## franka_control_node
+
 add_executable(franka_control_node src/franka_control_node.cpp)
+add_dependencies(franka_control_node
+  ${${PROJECT_NAME}_EXPORTED_TARGETS}
+  ${catkin_EXPORTED_TARGETS}
+)
 target_link_libraries(franka_control_node
   ${Franka_LIBRARIES}
   ${catkin_LIBRARIES}
 )
-
 target_include_directories(franka_control_node SYSTEM PUBLIC
   ${Franka_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
