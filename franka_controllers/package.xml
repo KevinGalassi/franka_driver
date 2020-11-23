@@ -2,11 +2,10 @@
 <package format="2">
   <name>franka_controllers</name>
   <version>0.7.0</version>
-  <description>The my_franka_control package</description>
-
-
-  <maintainer email="kevin@todo.todo">kevin</maintainer>
+  <description>Franka controllers ready to use! </description>
+  <maintainer email="galassi.kevin@gmail.com">kevin</maintainer>
   <license>TODO</license>
+
 
   <buildtool_depend>catkin</buildtool_depend>
 
@@ -40,6 +39,6 @@
   <exec_depend>robot_state_publisher</exec_depend>
 
   <export>
-    <controller_interface plugin="${prefix}/franka_robot_controllers_plugin.xml"/>
+    <controller_interface plugin="${prefix}/franka_controllers_plugin.xml"/>
   </export>
 </package>

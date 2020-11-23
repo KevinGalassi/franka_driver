@@ -1,6 +1,6 @@
 // Copyright (c) 2017 Franka Emika GmbH
 // Use of this source code is governed by the Apache-2.0 license, see LICENSE
-#include <cartesian_velocity_controller.h>
+#include <franka_controllers/cartesian_velocity_controller.h>
 
 #include <array>
 #include <cmath>
@@ -20,7 +20,7 @@
 #include <ros/ros.h>
 
 
-namespace franka_robot_controllers{
+namespace franka_controllers{
 
 bool CartesianVelocityController::init(hardware_interface::RobotHW* robot_hardware,
                                  ros::NodeHandle& robot_node_handle) {
@@ -103,8 +103,8 @@ void CartesianVelocityController::Velocity_callback(const std_msgs::Float32Multi
       cartesian_velocity(i) = (double)msg.data[i]; 
 }
 
-}  // namespace my_franka_velocity_controller
+}  // namespace franka_controllers
 
 
-PLUGINLIB_EXPORT_CLASS(franka_robot_controllers::CartesianVelocityController, 
+PLUGINLIB_EXPORT_CLASS(franka_controllers::CartesianVelocityController, 
                       controller_interface::ControllerBase)

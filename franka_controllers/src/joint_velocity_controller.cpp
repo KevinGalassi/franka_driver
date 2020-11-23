@@ -1,6 +1,6 @@
 // Copyright (c) 2017 Franka Emika GmbH
 // Use of this source code is governed by the Apache-2.0 license, see LICENSE
-#include <joint_velocity_controller.h>
+#include <franka_controllers/joint_velocity_controller.h>
 
 
 #include <cmath>
@@ -22,7 +22,7 @@
 #include <tf/transform_datatypes.h>
 
 
-namespace franka_robot_controllers{
+namespace franka_controllers{
 
 bool JointVelocityController::init(hardware_interface::RobotHW* robot_hardware,
                                  ros::NodeHandle& robot_node_handle) {
@@ -124,5 +124,5 @@ void JointVelocityController::Velocity_callback(const std_msgs::Float32MultiArra
 }  // namespace my_franka_velocity_controller
 
 
-PLUGINLIB_EXPORT_CLASS(franka_robot_controllers::JointVelocityController, 
+PLUGINLIB_EXPORT_CLASS(franka_controllers::JointVelocityController, 
                       controller_interface::ControllerBase)

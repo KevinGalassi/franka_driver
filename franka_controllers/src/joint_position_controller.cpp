@@ -1,6 +1,6 @@
 
 
-#include <joint_position_controller.h>
+#include <franka_controllers/joint_position_controller.h>
 
 #include <cmath>
 
@@ -11,7 +11,7 @@
 #include <ros/ros.h>
 
 
-namespace franka_robot_controllers {
+namespace franka_controllers{
 
 bool JointPositionController::init(hardware_interface::RobotHW* robot_hardware,
                                           ros::NodeHandle& robot_node_handle)
@@ -37,14 +37,14 @@ bool JointPositionController::init(hardware_interface::RobotHW* robot_hardware,
     for (size_t i = 0; i < 7; ++i)
     {
         try {
-        position_joint_handles[i] = position_joint_interface_->getHandle(joint_names[i]);
+        position_joint_handles[i] = position_joint_interface->getHandle(joint_names[i]);
         } catch (const hardware_interface::HardwareInterfaceException& e) {
         ROS_ERROR_STREAM("JointPositionController: Exception getting joint handles: " << e.what());
         return false;
         }
     }
 
-    publish_rate = 60;
+    publish_rate = 60.0;
     trigger_publish = franka_hw::TriggerRate(publish_rate);
   
     pos_cmd_sub = robot_node_handle.subscribe("/joint_position_request", 10, &JointPositionController::Position_callback, this);
@@ -82,12 +82,12 @@ void JointPositionController::Position_callback(const std_msgs::Float32MultiArra
     else
     {
         for(int i=0; i<7; i++)
-            joint_position(i) = msg.data(i);
+            joint_position(i) = msg.data[i];
     }
 }
 
 
-}   // franka_robots_controllers
+}   // franka_controllers
 
-PLUGINLIB_EXPORT_CLASS(franka_robot_controllers::JointPositionController,
+PLUGINLIB_EXPORT_CLASS(franka_controllers::JointPositionController,
                         controller_interface::ControllerBase)

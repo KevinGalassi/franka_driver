@@ -28,7 +28,7 @@ find_package(Franka 0.7.0 REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES my_franka_controller
+  LIBRARIES franka_controllers
   CATKIN_DEPENDS
     controller_interface
     dynamic_reconfigure
@@ -45,56 +45,39 @@ catkin_package(
   DEPENDS Franka
 )
 
-add_library(${PROJECT_NAME}
-  src/state_publisher.cpp
+add_library(franka_controllers
   src/joint_velocity_controller.cpp
+  src/joint_position_controller.cpp
   src/cartesian_velocity_controller.cpp
 )
 
 
-add_dependencies(${PROJECT_NAME}
+add_dependencies(franka_controllers
   ${${PROJECT_NAME}_EXPORTED_TARGETS}
   ${catkin_EXPORTED_TARGETS}
 )
 
-target_link_libraries(${PROJECT_NAME} PUBLIC
+target_link_libraries(franka_controllers PUBLIC
   ${Franka_LIBRARIES}
   ${catkin_LIBRARIES}
 )
 
-target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC
+target_include_directories(franka_controllers SYSTEM PUBLIC
   ${Franka_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
 )
-target_include_directories(${PROJECT_NAME} PUBLIC
+target_include_directories(franka_controllers PUBLIC
   include
   ${catkin_INCLUDE_DIRS}
 )
 
 
 
-## franka_control_node
-
-add_executable(franka_control_node src/franka_control_node.cpp)
-add_dependencies(franka_control_node
-  ${${PROJECT_NAME}_EXPORTED_TARGETS}
-  ${catkin_EXPORTED_TARGETS}
-)
-target_link_libraries(franka_control_node
-  ${Franka_LIBRARIES}
-  ${catkin_LIBRARIES}
-)
-target_include_directories(franka_control_node SYSTEM PUBLIC
-  ${Franka_INCLUDE_DIRS}
-  ${catkin_INCLUDE_DIRS}
-)
-
 
 
 ## Installation
-install(TARGETS ${PROJECT_NAME}
-                franka_control_node
+install(TARGETS franka_controllers
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -105,7 +88,7 @@ install(DIRECTORY launch
 install(DIRECTORY config
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
-install(FILES franka_robot_controllers_plugin.xml
+install(FILES franka_controllers_plugin.xml
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
@@ -120,10 +103,9 @@ if(CLANG_TOOLS)
     ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h
   )
-  add_format_target(${PROJECT_NAME} FILES ${SOURCES} ${HEADERS})
-  add_tidy_target(${PROJECT_NAME}
+  add_format_target(franka_controllers FILES ${SOURCES} ${HEADERS})
+  add_tidy_target(franka_controllers
     FILES ${SOURCES}
-    DEPENDS ${PROJECT_NAME} franka_control_node
+    DEPENDS franka_controllers
   )
 endif()
-

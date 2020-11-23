@@ -1,0 +1,31 @@
+<library path="lib/libfranka_controllers">
+
+  <class name="franka_controllers/JointVelocityController"
+         type="franka_controllers::JointVelocityController"
+         base_class_type="controller_interface::ControllerBase">
+    <description>
+      Franka robot velocity position controller, Kevin Galassi Bologna
+    </description>
+  </class>
+
+  <class name="franka_controllers/CartesianVelocityController"
+         type="franka_controllers::CartesianVelocityController"
+         base_class_type="controller_interface::ControllerBase">
+    <description>
+      Franka robot cartesian velocity 
+    </description>
+  </class>
+
+  <class name="franka_controllers/JointPositionController"
+         type="franka_controllers::JointPositionController"
+         base_class_type="controller_interface::ControllerBase">
+    <description>
+      Franka robot joint position controller 
+    </description>
+  </class>
+
+</library>
+
+
+
+

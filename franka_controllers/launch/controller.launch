@@ -16,7 +16,7 @@
   </include>
 
 <!-- Launch the RViz -->
-  <include file="$(find panda_moveit)/launch/moveit_rviz.launch">
+  <include file="$(find panda_moveit_config)/launch/moveit_rviz.launch">
     <arg name="rviz_tutorial" value="$(arg rviz_tutorial)"/>
     <arg name="debug" value="$(arg debug)"/>
   </include>
@@ -29,7 +29,7 @@
   <node name="controller_spawner_pos" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args=" --stopped joint_position_controller"/>
 
 <!-- Load MoveIt with pos_joint_trajectory_controller (ALWAYS LAUNCHED AS ACTIVE) -->
-  <include file="$(find panda_moveit)/launch/panda_moveit.launch">
+  <include file="$(find panda_moveit_config)/launch/panda_moveit.launch">
     <arg name="load_gripper" value="$(arg load_gripper)" />
   </include>
 
