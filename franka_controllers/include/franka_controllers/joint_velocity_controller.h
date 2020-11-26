@@ -47,14 +47,21 @@ namespace franka_controllers
     
     double publish_rate;
     franka_hw::TriggerRate trigger_publish;
-
-    ros::Subscriber vel_cmd_sub;
     double last_cmd_time;
     double vel_cmd_timeout;
 
+    ros::Subscriber vel_cmd_sub;
+    std_msgs::Float32MultiArray vel_msg;
     void Velocity_callback(const std_msgs::Float32MultiArray &msg);
     
     Eigen::Matrix<double, 7, 1> joint_velocity;
+    
+    // Filter
+    Eigen::Matrix<double, 7, 1> vel_filter;
+    int filter_size;
+    int filter_index;
+    std::vector<Eigen::Matrix<double, 7, 1>> VelDataVector;
+    Eigen::Matrix<double, 7, 1> MeanMatrix;
 
   };
 
