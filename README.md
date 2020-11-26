@@ -1,8 +1,8 @@
 # franka_driver
 Franka Controllers ready to use:
 
-This folder provide evrything that is necessary to start using a panda robot. <br />
-All the controllers can be founded in the franka_controlelrs package. After you launched or activated from the control_manager the desired controller, you just need to publish the new desired target in the proper topics.
+This folder provides everything that is necessary to start using a panda robot. <br />
+All the controllers can be founded in the franka_controllers package. After you launched or activated from the control_manager the desired controller, you just need to publish the new desired target in the proper topics.
 
 Description of the packages contained:
 
@@ -21,7 +21,7 @@ panda_moveit_config: MoveIt information for the panda<br />
 To use the packages be sure to have correctly installed all the libraries provided by Franka Emika following the procedure: <br>
 https://frankaemika.github.io/docs/installation_linux.html
 
-Download all the folders and compile the workspace with the proper command, substituite the correct path of the libfranka folder:
+Download all the folders and compile the workspace with the proper command, substitute the correct path of the libfranka folder:
 ```sh
 $ catkin_make -DCMAKE_BUILD_TYPE=Release -DFranka_DIR:PATH=/path/to/libfranka/build
 ```
@@ -44,7 +44,7 @@ To control the robot, the user must publish an std_msgs::Float32MultiArray vecto
 |joint_velocity_controller    |/joint_velocity_request    |
 |cartesian_velocity_controller|/cartesian_velocity_request|
 
-The controller require a **constant** publishing of velocity vector, otherwise as safety precaution the velocity will be automatically be setted to 0. <br>
+The controller requires a **constant** publishing of velocity vector, otherwise as safety precaution the velocity will be automatically been setted to 0. <br>
 As additional feature, the controller will automatically check if the input respect the joint/cartesian limits in term of velocity, acceleration and jerk, moving the robot at the heighest velocity possible.
 
 
