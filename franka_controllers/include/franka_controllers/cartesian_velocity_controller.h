@@ -14,7 +14,6 @@
 #include <ros/time.h>
 
 #include <std_msgs/Float32MultiArray.h>
-
 #include <Eigen/Core>
 
 
@@ -32,15 +31,40 @@ public:
 private:
     franka_hw::FrankaVelocityCartesianInterface* velocity_cartesian_interface;
     std::unique_ptr<franka_hw::FrankaCartesianVelocityHandle> velocity_cartesian_handle;
+    
     ros::Duration elapsed_time;
-
     double publish_rate; // double check
     franka_hw::TriggerRate trigger_publish;
+    double last_cmd_time;
+    double vel_cmd_timeout;
+
+    /* Velocity rescaler */
+    const double p_dot = 1.700;
+    const double p_ddot = 13.0;
+    const double p_dddot = 6500.0;
+    Eigen::Vector3d scaling_factor;
+    double max_scaling_factor;
+
+    Eigen::Matrix<double, 6, 1> last_cart_velocity;
+    Eigen::Matrix<double, 6, 1> last_cartesian_acc;
+    Eigen::Matrix<double, 6, 1> cartesian_velocity;
+    Eigen::Matrix<double, 6, 1> cartesian_acc;
+    Eigen::Matrix<double, 6, 1> cartesian_jerk;
 
     ros::Subscriber vel_cmd_sub; 
+    std_msgs::Float32MultiArray vel_msg;
     void Velocity_callback(const std_msgs::Float32MultiArray& msg);
 
-    Eigen::Matrix<double, 6, 1> cartesian_velocity;
+    std::array<double, 6> command, last_command;
+
+
+    // Filter
+    Eigen::Matrix<double, 6, 1> vel_filter;
+    int filter_size;
+    int filter_index;
+    std::vector<Eigen::Matrix<double, 6, 1>> VelDataVector;
+    Eigen::Matrix<double, 6, 1> MeanMatrix;
+
 };
 
 

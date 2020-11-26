@@ -5,7 +5,6 @@
 
 #include <cmath>
 #include <memory>
-#include <mutex>
 #include <string>
 
 #include <franka/errors.h>
@@ -18,8 +17,6 @@
 
 
 #include <ros/ros.h>
-#include <tf/tf.h>
-#include <tf/transform_datatypes.h>
 
 
 namespace franka_controllers{
@@ -27,77 +24,86 @@ namespace franka_controllers{
 bool JointVelocityController::init(hardware_interface::RobotHW* robot_hardware,
                                  ros::NodeHandle& robot_node_handle) {
 
-  velocity_joint_interface = robot_hardware->get<hardware_interface::VelocityJointInterface>();
-  if (velocity_joint_interface == nullptr) {
-    ROS_ERROR("JointVelocityController: Error getting velocity joint interface from hardware!");
-    return false;
-  }
-  std::vector<std::string> joint_names;
-  if (!robot_node_handle.getParam("joint_names", joint_names)) {
-    ROS_ERROR("JointVelocityController: Could not parse joint names");
-  }
-  if (joint_names.size() != 7) {
-    ROS_ERROR_STREAM("JointVelocityController: Wrong number of joint names, got "
-                     << joint_names.size() << " instead of 7 names!");
-    return false;
-  }
-  velocity_joint_handles.resize(7);
-  for (size_t i = 0; i < 7; ++i) {
-    try {
-      velocity_joint_handles[i] = velocity_joint_interface->getHandle(joint_names[i]);
-    } catch (const hardware_interface::HardwareInterfaceException& ex) {
-      ROS_ERROR_STREAM("JointVelocityController: Exception getting joint handles: " << ex.what());
-      return false;
+    velocity_joint_interface = robot_hardware->get<hardware_interface::VelocityJointInterface>();
+    if (velocity_joint_interface == nullptr) {
+        ROS_ERROR("JointVelocityController: Error getting velocity joint interface from hardware!");
+        return false;
     }
-  }
+    std::vector<std::string> joint_names;
+    if (!robot_node_handle.getParam("joint_names", joint_names)) {
+        ROS_ERROR("JointVelocityController: Could not parse joint names");
+    }
+    if (joint_names.size() != 7) {
+        ROS_ERROR_STREAM("JointVelocityController: Wrong number of joint names, got "
+                        << joint_names.size() << " instead of 7 names!");
+        return false;
+    }
+    velocity_joint_handles.resize(7);
+    for (size_t i = 0; i < 7; ++i) {
+        try {
+        velocity_joint_handles[i] = velocity_joint_interface->getHandle(joint_names[i]);
+        } catch (const hardware_interface::HardwareInterfaceException& ex) {
+        ROS_ERROR_STREAM("JointVelocityController: Exception getting joint handles: " << ex.what());
+        return false;
+        }
+    }
 
-  auto state_interface = robot_hardware->get<franka_hw::FrankaStateInterface>();
-  if (state_interface == nullptr) {
-    ROS_ERROR("JointVelocityController: Could not get state interface from hardware");
-    return false;
-  }                              
+    /*
+    publish_rate = 60;
+    trigger_publish = franka_hw::TriggerRate(publish_rate);
+    */
+    
+    vel_cmd_sub = robot_node_handle.subscribe("/joint_velocity_request", 10, &JointVelocityController::Velocity_callback, this);
 
 
-
-  publish_rate = 60;
-  trigger_publish = franka_hw::TriggerRate(publish_rate);
-  
-  vel_cmd_sub = robot_node_handle.subscribe("/joint_velocity_request", 10, &JointVelocityController::Velocity_callback, this);
-
-
-  return true;
+    return true;
 }
 
 
-void JointVelocityController::starting(const ros::Time& time ) {
-  for(int i=0; i<7; i++)
-    joint_velocity(i) = 0;
+void JointVelocityController::starting(const ros::Time& time )
+{
+    for(int i=0; i<7; i++)
+        joint_velocity(i) = 0;
 
-  elapsed_time = ros::Duration(0.0);
-  vel_cmd_timeout = 0.1;
+    elapsed_time = ros::Duration(0.0);
+    vel_cmd_timeout = 0.1;
 
-  ROS_INFO("STARTING COMPLETED");
+    filter_size = 25;
+    filter_index = 0;
+    VelDataVector.resize(filter_size);
+    for(int i=0; i<filter_size; i++)
+        VelDataVector[i] << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
+    MeanMatrix << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
+    vel_msg.data.resize(7);
 
+    ROS_INFO("STARTING COMPLETED");
 }
 
 
 void JointVelocityController::update(const ros::Time& time, const ros::Duration& period ) {
   
-  elapsed_time += period;
+    elapsed_time += period;
 
-  
-
-  if(ros::Time::now().toSec() - last_cmd_time > vel_cmd_timeout)
-  {
-    for(int i=0; i<7; i++)
-      velocity_joint_handles[i].setCommand(0.00);
-    // ROS_INFO("JointVelocityController: Not receiveing any command, set the velocity to 0!");
-  }
-  else
-  {
-    for(int i=0;i<7;i++)
-      velocity_joint_handles[i].setCommand(joint_velocity(i));  
-  }
+    if(ros::Time::now().toSec() - last_cmd_time > vel_cmd_timeout)
+    {
+        for(int i=0; i<7; i++)
+        velocity_joint_handles[i].setCommand(0.00);
+        // ROS_INFO("JointVelocityController: Not receiveing any command, set the velocity to 0!");
+    }
+    else
+    {
+        VelDataVector[filter_index] = joint_velocity;
+        filter_index ++;
+        if (filter_index >= filter_size)
+            filter_index = 0;
+        for(int i=0; i< filter_size; i++)
+            MeanMatrix += VelDataVector[i];
+        vel_filter = MeanMatrix/(double)filter_size;  
+        MeanMatrix << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
+            
+        for(int i=0;i<7;i++)
+        velocity_joint_handles[i].setCommand(vel_filter(i));  
+    }
   
 }
 

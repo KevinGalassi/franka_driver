@@ -39,9 +39,9 @@ This will launch the joint and cartesian velocity controllers with the status -s
 
 To control the robot, the user must publish an std_msgs::Float32MultiArray vector in the correct topic listed below.
 
-| controller name | Topic to publish |
-|------------|-------|
-|joint_velocity_controller|/joint_velocity_request|
+| controller name             | Topic to publish          |
+|-----------------------------|---------------------------|
+|joint_velocity_controller    |/joint_velocity_request    |
 |cartesian_velocity_controller|/cartesian_velocity_request|
 
 The controller require a **constant** publishing of velocity vector, otherwise as safety precaution the velocity will be automatically be setted to 0. <br>
