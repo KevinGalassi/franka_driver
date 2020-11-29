@@ -51,5 +51,7 @@ As additional feature, the controller will automatically check if the input resp
 
 # Under development! #
 
+For those that actually use this repo, please let me know if you have found it useful or having some issue with it! <br>
+Suggestion are <ins> always </ins> welcome!
 
 
