@@ -17,8 +17,6 @@
 #include <hardware_interface/joint_command_interface.h>
 #include <hardware_interface/robot_hw.h>
 
-
-
 #include <std_msgs/Float32MultiArray.h>
 
 #include <Eigen/Core>
@@ -43,18 +41,35 @@ namespace franka_controllers
     // Velocity handler
     hardware_interface::VelocityJointInterface *velocity_joint_interface;
     std::vector<hardware_interface::JointHandle> velocity_joint_handles;
-    ros::Duration elapsed_time;
     
+    // Timing
+    ros::Duration elapsed_time;
     double publish_rate;
     franka_hw::TriggerRate trigger_publish;
     double last_cmd_time;
     double vel_cmd_timeout;
 
+    // Joint space limit check
+
+    Eigen::Matrix<double, 7, 1> q_dot;
+    Eigen::Matrix<double, 7, 1> q_ddot;
+    Eigen::Matrix<double, 7, 1> q_dddot;
+    
+    Eigen::Vector3d scaling_factor;
+    double max_scaling_factor;
+
+    Eigen::Matrix<double, 7, 1> last_joint_velocity;
+    Eigen::Matrix<double, 7, 1> last_joint_acceleration;
+    Eigen::Matrix<double, 7, 1> joint_velocity;
+    Eigen::Matrix<double, 7, 1> new_joint_velocity;
+    Eigen::Matrix<double, 7, 1> joint_acceleration;
+    Eigen::Matrix<double, 7, 1> joint_jerk;
+
+    // Input command subscriber
     ros::Subscriber vel_cmd_sub;
     std_msgs::Float32MultiArray vel_msg;
     void Velocity_callback(const std_msgs::Float32MultiArray &msg);
-    
-    Eigen::Matrix<double, 7, 1> joint_velocity;
+    std::array<double, 7> command, last_command;
     
     // Filter
     Eigen::Matrix<double, 7, 1> vel_filter;

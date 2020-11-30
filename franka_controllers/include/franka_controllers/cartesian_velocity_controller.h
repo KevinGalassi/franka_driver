@@ -32,6 +32,7 @@ private:
     franka_hw::FrankaVelocityCartesianInterface* velocity_cartesian_interface;
     std::unique_ptr<franka_hw::FrankaCartesianVelocityHandle> velocity_cartesian_handle;
     
+    // Timing
     ros::Duration elapsed_time;
     double publish_rate; // double check
     franka_hw::TriggerRate trigger_publish;
@@ -48,13 +49,14 @@ private:
     Eigen::Matrix<double, 6, 1> last_cart_velocity;
     Eigen::Matrix<double, 6, 1> last_cartesian_acc;
     Eigen::Matrix<double, 6, 1> cartesian_velocity;
+    Eigen::Matrix<double, 6, 1> new_cartesian_velocity;
     Eigen::Matrix<double, 6, 1> cartesian_acc;
     Eigen::Matrix<double, 6, 1> cartesian_jerk;
 
+    // Input command subscriber
     ros::Subscriber vel_cmd_sub; 
     std_msgs::Float32MultiArray vel_msg;
     void Velocity_callback(const std_msgs::Float32MultiArray& msg);
-
     std::array<double, 6> command, last_command;
 
 
