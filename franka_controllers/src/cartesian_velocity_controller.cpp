@@ -55,6 +55,17 @@ bool CartesianVelocityController::init(hardware_interface::RobotHW* robot_hardwa
     return false;
   }
 
+    try {
+    state_handle_ = std::make_unique<franka_hw::FrankaStateHandle>(
+        state_interface->getHandle(arm_id + "_robot"));
+  } catch (const hardware_interface::HardwareInterfaceException& e) {
+    ROS_ERROR_STREAM(
+        "JointVelocityNodeController: Exception getting state handle: " << e.what());
+    return false;
+  }
+
+
+
   publish_rate = 100;
   trigger_publish= franka_hw::TriggerRate(publish_rate);
 
@@ -92,35 +103,59 @@ void CartesianVelocityController::update(const ros::Time& time, const ros::Durat
 
     if(ros::Time::now().toSec() - last_cmd_time > vel_cmd_timeout)
     {
-        // Controllo di ave ricevuto un comando
+        // Controllo di aver ricevuto un comando
         for(int i=0; i<6; i++)
-            command[i] = 0.0;
+        {
+            new_cartesian_velocity(i) = 0.0;
+            std::cout<< "Timeout";
+        }
+    }
+
+    cartesian_acc = (new_cartesian_velocity - last_cart_velocity)/period.toSec();
+    cartesian_jerk = (cartesian_acc - last_cartesian_acc)/period.toSec();
+
+
+    auto state = state_handle_->getRobotState();
+
+    for(int i=0; i<6; i++)
+        new_cartesian_vel[i] = new_cartesian_velocity(i);
+
+
+    command = franka::limitRate(p_dot,
+                                p_ddot,
+                                p_dddot, 
+                                rot_dot, 
+                                rot_ddot, 
+                                rot_dddot, 
+                                new_cartesian_vel,  
+                                state.O_dP_EE_c,
+                                state.O_ddP_EE_c  );
+    
+    /*
+
+    scaling_factor[0] = (abs(new_cartesian_velocity)/p_dot).maxCoeff();
+    scaling_factor[1] = (cartesian_acc/p_ddot).maxCoeff();
+    scaling_factor[2] = (cartesian_jerk/p_dddot).maxCoeff();
+
+    Eigen::Index max,min;
+    max_scaling_factor = scaling_factor.maxCoeff(&max);
+    if( max_scaling_factor > 1.0 && max_scaling_factor != 0.0)
+    {
+        int index = (int)max;
+        for(int i=0; i<6; i++)
+            command[i] = new_cartesian_velocity(i)/(pow(max_scaling_factor, 1/(index+1)));
     }
     else
     {
-        cartesian_acc = (cartesian_velocity - last_cart_velocity)/period.toSec();
-        cartesian_jerk = (cartesian_acc - last_cartesian_acc)/period.toSec();
-
-        scaling_factor[0] = (cartesian_velocity/p_dot).maxCoeff();
-        scaling_factor[1] = (cartesian_acc/p_ddot).maxCoeff();
-        scaling_factor[2] = (cartesian_jerk/p_dddot).maxCoeff();
-
-        Eigen::Index max,min;
-        max_scaling_factor = scaling_factor.maxCoeff(&max);
-        if( max_scaling_factor > 1.0)
-        {
-            int index = (int)max;
-            for(int i=0; i<6; i++)
-                command[i] = cartesian_velocity(i)/(pow(max_scaling_factor, 1/(index+1)));
-        }
-        else
-        {
-            for(int i=0; i<6; i++)
-               command[i] = cartesian_velocity(i);
-        }
+        for(int i=0; i<6; i++)
+            command[i] = new_cartesian_velocity(i);
     }
+
+    */
+    
   
     velocity_cartesian_handle->setCommand(command);
+    
     for(int i=0; i<6; i++)
     {
         last_cart_velocity(i) = command[i];
@@ -144,15 +179,13 @@ void CartesianVelocityController::Velocity_callback(const std_msgs::Float32Multi
     else
     {
         for(int i=0; i<6;i++)
-        cartesian_velocity(i) = (double)msg.data[i];
+            new_cartesian_velocity(i) = (double)msg.data[i];
     }
 
     last_cmd_time = ros::Time::now().toSec();
-
 }
 
 }  // namespace franka_controllers
 
 
-PLUGINLIB_EXPORT_CLASS(franka_controllers::CartesianVelocityController, 
-                      controller_interface::ControllerBase)
+PLUGINLIB_EXPORT_CLASS(franka_controllers::CartesianVelocityController, controller_interface::ControllerBase)

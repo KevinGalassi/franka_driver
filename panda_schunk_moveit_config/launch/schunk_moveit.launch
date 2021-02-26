@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<launch>
+
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="position_joint_trajectory_controller hand_controller"/>
+
+  <include file="$(find panda_schunk_moveit_config)/launch/move_group.launch" />
+  
+
+  <node pkg="tf2_ros" type="static_transform_publisher" name="virtual_joint_broadcaster_camera" args="0.435 0.165 0.031 3.14 0 -1.570 world camera_link" >
+    <param name="rate" value="1000"/>
+  </node>
+
+</launch>

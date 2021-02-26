@@ -2,42 +2,97 @@
 
 <launch>
 
-  <arg name="robot_ip" value="172.16.0.2"/>
-  <arg name="load_gripper" value="true" />
-  <arg name="rviz_tutorial" default="false" />
-  <arg name="use_gui" default="false" />
-  <arg name="debug" default="false" />
+   <arg name="robot_ip" value="172.16.0.2"/>
+   <arg name="rviz_tutorial" default="false" />
+   <arg name="use_gui" default="false" />
+   <arg name="debug" default="false" />
+
+   <arg name="load_gripper" value="true" />
+   <arg name="load_tactile" default="true" />
+   <arg name="load_panda"   default="false" />
+   <arg name="load_schunk"  default="false"/>
+
+   <arg name="load_joint_velocity"  default="false" />
+   <arg name="load_joint_position"  default="false" />
+   <arg name="load_cart_velocity"   default="false" />
+   <arg name="load_cart_impedance"  default="true" />
+   <arg name="load_ex_imp"          default="false" />
 
 
 <!-- Launch the state publisher-->
-  <include file="$(find franka_control)/launch/franka_control.launch">
-     <arg name="robot_ip" value="$(arg robot_ip)" />
-     <arg name="load_gripper" value="$(arg load_gripper)" /> 
-  </include>
+   <include file="$(find franka_controllers)/launch/franka_state_control.launch">
+      <arg name="robot_ip" value="$(arg robot_ip)" />
+      <arg name="load_gripper" value="$(arg load_gripper)" /> 
+      <arg name="load_tactile" value="$(arg load_tactile)" /> 
+      <arg name="load_panda" value="$(arg load_panda)" /> 
+      <arg name="load_schunk" value="$(arg load_schunk)" /> 
+   </include>
+
 
 <!-- Launch the RViz -->
-  <include file="$(find panda_moveit_config)/launch/moveit_rviz.launch">
-    <arg name="rviz_tutorial" value="$(arg rviz_tutorial)"/>
-    <arg name="debug" value="$(arg debug)"/>
-  </include>
-
-<!-- Load all the desired controllers -->
-  <rosparam command="load" file="$(find franka_controllers)/config/franka_controllers.yaml" />
-  <node name="controller_spawner_vel" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args=" --stopped joint_velocity_controller"/>
-
-  <rosparam command="load" file="$(find franka_controllers)/config/franka_controllers.yaml" />
-  <node name="controller_spawner_pos" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args=" --stopped joint_position_controller"/>
-
-<!-- Load MoveIt with pos_joint_trajectory_controller (ALWAYS LAUNCHED AS ACTIVE) -->
-  <include file="$(find panda_moveit_config)/launch/panda_moveit.launch">
-    <arg name="load_gripper" value="$(arg load_gripper)" />
-  </include>
+   <include file="$(find panda_moveit_config)/launch/moveit_rviz.launch">
+      <arg name="rviz_tutorial" value="$(arg rviz_tutorial)"/>
+      <arg name="debug" value="$(arg debug)"/>
+   </include>
 
 
-  <node pkg="tf2_ros" type="static_transform_publisher" name="virtual_joint_broadcaster_1" args="0 0 0 0 0 0 world panda_link0" >
-    <param name="rate" value="1000"/>
-  </node>
+
+
+<!-- FRANKA CONTROLLERS LAUNCH -->
+
+
+   <rosparam command="load" file="$(find franka_controllers)/config/franka_controllers.yaml" />
+   <node if="$(arg load_joint_velocity)" name="controller_spawner_j_vel" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args=" --stopped joint_velocity_controller"/>
+
+   <rosparam command="load" file="$(find franka_controllers)/config/franka_controllers.yaml" />
+   <node if="$(arg load_joint_position)" name="controller_spawner_j_pos" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args=" --stopped joint_position_controller"/>
+
+   <rosparam command="load" file="$(find franka_controllers)/config/franka_controllers.yaml" />
+   <node if="$(arg load_cart_velocity)" name="controller_spawner_c_vel" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args=" --stopped cartesian_velocity_controller"/>
+
+
+   <rosparam command="load" file="$(find franka_controllers)/config/franka_controllers.yaml" />
+   <node if="$(arg load_cart_impedance)" name="controller_spawner_impeadance" pkg="controller_manager" type="spawner" respawn="false" output="screen" args=" --stopped cartesian_impedance_controller"/>
+   <node if="$(arg load_cart_impedance)" name="rqt_reconfigure" pkg="rqt_reconfigure" type="rqt_reconfigure" required="false" />
+
+
+
+   <group if="$(arg load_ex_imp)">
+   
+      <rosparam command="load" file="$(find franka_example_controllers)/config/franka_example_controllers.yaml" />
+      <node name="controller_spawner_ex_imp" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="--stopped cartesian_impedance_example_controller"/>
+      <node name="rqt_reconfigure" pkg="rqt_reconfigure" type="rqt_reconfigure" required="false" />
+   
+   </group>
+
+
+
+
+
+
+
+<!-- MOVEIT LAUNCH (ALWAYS ACTIVE) -->
+   <include unless="$(arg load_schunk)" file="$(find panda_moveit_config)/launch/panda_moveit.launch">
+      <arg name="load_gripper" value="$(arg load_gripper)" />
+   </include>
+
+   <include if="$(arg load_schunk)" file="$(find panda_schunk_moveit_config)/launch/schunk_moveit.launch"/>
+
+
+
+   <node pkg="tf2_ros" type="static_transform_publisher" name="world_transform_broadcaster" args="0 0 0 0 0 0 world panda_link0" >
+      <param name="rate" value="1000"/>
+   </node>
+
+
+   <node pkg="tf2_ros" type="static_transform_publisher" name="aruco_marker_broadcaster" args="0.0 -0.015 0.098 0 0 0 panda_rightfinger marker_position" >
+      <param name="rate" value="1000"/>
+   </node>
+
+   <node pkg="tf2_ros" type="static_transform_publisher" name="virtual_joint_broadcaster_2" args="0.40 0.15 0.031 3.14 0 -1.570 world head_camera" >
+      <param name="rate" value="1000"/>
+   </node>
+
 
 
 </launch>
-

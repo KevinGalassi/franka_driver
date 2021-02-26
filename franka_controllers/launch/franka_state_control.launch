@@ -1,0 +1,77 @@
+<?xml version="1.0" ?>
+<launch>
+
+
+  <arg name="robot_ip" default="172.168.16.2"/>
+  
+  <arg name="load_gripper" default="true" />
+  <arg name="load_tactile" default="true" />
+  <arg name="load_panda"   default="false" />
+  <arg name="load_schunk"  default="false"/>
+
+   <!-- LOAD DESCRIPTION FILES-->
+
+   <group if="$(arg load_gripper)">
+      <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find franka_description)/robots/panda_arm_hand.urdf.xacro'" if="$(arg load_gripper)" />
+      <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find franka_description)/robots/panda_arm_tactile.urdf.xacro'" if="$(arg load_tactile)" />
+      <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find franka_description)/robots/panda_arm_schunk.urdf.xacro'" if="$(arg load_schunk)" />
+   </group>
+   <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find franka_description)/robots/panda_arm.urdf.xacro'" unless="$(arg load_gripper)" />
+
+
+   <!-- LOAD GRIPPER -->
+   <group unless="$(arg load_schunk)" >
+      <include file="$(find franka_gripper)/launch/franka_gripper.launch" if="$(arg load_gripper)">
+         <arg name="robot_ip" value="$(arg robot_ip)" />
+      </include>
+   </group>
+
+  <include file="$(find schunk_pg70)/launch/pg70_rs232_control.launch" if="$(arg load_schunk)" />
+
+
+
+   <node name="franka_control" pkg="franka_controllers" type="franka_control_node" output="screen" required="true">
+      <rosparam command="load" file="$(find franka_controllers)/config/franka_control_node.yaml" />
+      <param name="robot_ip" value="$(arg robot_ip)" />
+   </node>
+
+   <rosparam command="load" file="$(find franka_controllers)/config/franka_controllers.yaml" />
+
+   <node name="state_controller_spawner"  pkg="controller_manager"      type="spawner" respawn="false" output="screen" args="franka_state_controller"/>
+   <node name="robot_state_publisher"     pkg="robot_state_publisher"   type="robot_state_publisher" output="screen"/>
+
+      
+   <!-- Loading of the joint state publisher-->
+   <group unless="$(arg load_schunk)">
+      <node name="joint_state_publisher" type="joint_state_publisher" pkg="joint_state_publisher" output="screen">
+         <rosparam if="$(arg load_gripper)" param="source_list">[franka_state_controller/joint_states, franka_gripper/joint_states] </rosparam>
+         <rosparam unless="$(arg load_gripper)" param="source_list">[franka_state_controller/joint_states] </rosparam>
+         <param name="rate" value="100"/>
+      </node>
+
+      <node name="joint_state_desired_publisher" type="joint_state_publisher" pkg="joint_state_publisher" output="screen">
+         <rosparam if="$(arg load_gripper)" param="source_list">[franka_state_controller/joint_states_desired, franka_gripper/joint_states] </rosparam>
+         <rosparam unless="$(arg load_gripper)" param="source_list">[franka_state_controller/joint_states_desired] </rosparam>
+         <param name="rate" value="100"/>
+         <remap from="/joint_states" to="/joint_states_desired" />
+      </node>
+   </group>
+
+   <group if="$(arg load_schunk)">
+      <rosparam command="load" file="$(find franka_controllers)/config/franka_controllers.yaml" />
+      <node name="state_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="franka_state_controller"/>
+      <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen"/>
+      <node name="joint_state_publisher" type="joint_state_publisher" pkg="joint_state_publisher" output="screen">
+         <rosparam param="source_list">[franka_state_controller/joint_states, schunk_pg70/joint_states] </rosparam>
+         <param name="rate" value="100"/>
+      </node>
+      
+      <node name="joint_state_desired_publisher" type="joint_state_publisher" pkg="joint_state_publisher" output="screen">
+         <rosparam param="source_list">[franka_state_controller/joint_states_desired, schunk_pg70/joint_states_desired] </rosparam>
+         <param name="rate" value="100"/>
+         <remap from="/joint_states" to="/joint_states_desired" />
+      </node>
+   </group>
+
+
+</launch>

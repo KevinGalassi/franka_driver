@@ -1,0 +1,23 @@
+ controller_list:
+  - name: position_joint_trajectory_controller
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    default: true
+    joints:
+      - panda_joint1
+      - panda_joint2
+      - panda_joint3
+      - panda_joint4
+      - panda_joint5
+      - panda_joint6
+      - panda_joint7
+    constraints:
+      stopped_velocity_tolerance: 0
+
+  - name: hand_controller
+    action_ns: follow_joint_trajectory
+    default: True
+    type: FollowJointTrajectory
+    joints:
+      - schunk_pg70_finger_left_joint
+      - schunk_pg70_finger_right_joint

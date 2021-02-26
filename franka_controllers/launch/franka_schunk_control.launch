@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<launch>
+  <arg name="robot_ip" />
+
+  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find franka_description)/robots/panda_schunk.urdf.xacro'" />
+
+
+  <node name="franka_control" pkg="franka_controllers" type="franka_control_node" output="screen" required="true">
+    <rosparam command="load" file="$(find franka_controllers)/config/franka_control_node.yaml" />
+    <param name="robot_ip" value="$(arg robot_ip)" />
+  </node>
+
+  <rosparam command="load" file="$(find franka_controllers)/config/franka_controllers.yaml" />
+  <node name="state_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="franka_state_controller"/>
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen"/>
+  <node name="joint_state_publisher" type="joint_state_publisher" pkg="joint_state_publisher" output="screen">
+    <rosparam param="source_list">[franka_state_controller/joint_states, schunk_pg70/joint_states] </rosparam>
+    <param name="rate" value="100"/>
+  </node>
+  
+  <node name="joint_state_desired_publisher" type="joint_state_publisher" pkg="joint_state_publisher" output="screen">
+    <rosparam param="source_list">[franka_state_controller/joint_states_desired, schunk_pg70/joint_states_desired] </rosparam>
+    <param name="rate" value="100"/>
+    <remap from="/joint_states" to="/joint_states_desired" />
+  </node>
+</launch>
+

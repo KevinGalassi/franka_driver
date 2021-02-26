@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: franka_description
+    relative_path: robots/panda_schunk.urdf.xacro
+    xacro_args: ""
+  SRDF:
+    relative_path: config/panda_arm.srdf.xacro
+  CONFIG:
+    author_name: Kevin Galassi
+    author_email: kevin.galassi2@unibo.it
+    generated_timestamp: 1609236105

@@ -54,37 +54,15 @@ add_dependencies(franka_gripper
   ${PROJECT_NAME}_generate_messages_cpp
 )
 
-target_link_libraries(franka_gripper
-  ${Franka_LIBRARIES}
-  ${catkin_LIBRARIES}
-)
+target_link_libraries(franka_gripper  ${Franka_LIBRARIES}  ${catkin_LIBRARIES})
+target_include_directories(franka_gripper SYSTEM PUBLIC  ${Franka_INCLUDE_DIRS}  ${catkin_INCLUDE_DIRS})
+target_include_directories(franka_gripper PUBLIC  include)
 
-target_include_directories(franka_gripper SYSTEM PUBLIC
-  ${Franka_INCLUDE_DIRS}
-  ${catkin_INCLUDE_DIRS}
-)
-target_include_directories(franka_gripper PUBLIC
-  include
-)
 
-add_executable(franka_gripper_node
-  src/franka_gripper_node.cpp
-)
-
-add_dependencies(franka_gripper_node
-  ${${PROJECT_NAME}_EXPORTED_TARGETS}
-  ${catkin_EXPORTED_TARGETS}
-  franka_gripper
-)
-
-target_link_libraries(franka_gripper_node
-   ${catkin_LIBRARIES}
-   franka_gripper
-)
-
-target_include_directories(franka_gripper_node SYSTEM PUBLIC
-  ${catkin_INCLUDE_DIRS}
-)
+add_executable(franka_gripper_node src/franka_gripper_node.cpp)
+add_dependencies(franka_gripper_node  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS}  franka_gripper )
+target_link_libraries(franka_gripper_node   ${catkin_LIBRARIES}   franka_gripper )
+target_include_directories(franka_gripper_node SYSTEM PUBLIC  ${catkin_INCLUDE_DIRS})
 
 ## Installation
 install(TARGETS franka_gripper
