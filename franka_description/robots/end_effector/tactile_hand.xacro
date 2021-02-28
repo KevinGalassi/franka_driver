@@ -29,7 +29,7 @@
 <!-- LEFT FINGER-->
     <link name="${ns}_leftfinger">
       <visual>
-         <origin xyz="0 0 0.02" rpy="0 0 0"/>
+         <origin xyz="0 0.015 0.02" rpy="0 0 0"/>
          <geometry>
             <mesh filename="package://franka_description/meshes/tactile_finger.stl" scale="0.001 0.001 0.001"/>
          </geometry>
@@ -49,7 +49,7 @@
 <!-- RIGHT FINGER-->
     <link name="${ns}_rightfinger">
       <visual>
-         <origin xyz="0 0 0.02" rpy="0 0 ${pi}"/>
+         <origin xyz="0 -0.015 0.02" rpy="0 0 ${pi}"/>
          <geometry>
             <mesh filename="package://franka_description/meshes/tactile_finger.stl" scale="0.001 0.001 0.001"/>
          </geometry>
@@ -88,7 +88,7 @@
    <joint name="${ns}_object_joint" type="fixed" >
       <parent link="${ns}_hand" />
       <child link="${ns}_object_link" />
-      <origin xyz="0 0 0.170" rpy="0 0 0"/>
+      <origin xyz="0 0 0.155" rpy="0 0 0"/>
       <!-- Base delle dita 0.0584-->
    </joint>
 
@@ -105,6 +105,30 @@
          </geometry>
 	   </collision>
    </link>
+
+      <joint name="${ns}_tactile_joint" type="fixed" >
+      <parent link="${ns}_object_link" />
+      <child link="${ns}_tactile_link" />
+      <origin xyz="0 0 -0.0125" rpy="${pi/2} 0 0"/>
+      <!-- Base delle dita 0.0584-->
+   </joint>
+
+   <link name="${ns}_tactile_link">
+      <visual>
+         <geometry>
+            <box size="0.0 0.00 0.0"/>
+         </geometry>
+	      <material name="silver" />
+      </visual>
+      <collision>
+         <geometry>
+            <box size="0.00 0.00 0.0"/>
+         </geometry>
+	   </collision>
+   </link>
+
+
+
 
   </xacro:macro>
 </robot>
