@@ -16,6 +16,10 @@ find_package(catkin REQUIRED COMPONENTS
    tf
    tf_conversions
    message_generation
+   moveit_msgs
+   moveit_core
+   moveit_visual_tools
+   moveit_ros_planning_interface
    pluginlib
    realtime_tools
    roscpp
@@ -44,6 +48,10 @@ catkin_package(
       tf
       tf_conversions
       message_runtime
+      moveit_msgs 
+      moveit_core
+      moveit_visual_tools
+      moveit_ros_planning_interface
       pluginlib
       realtime_tools
       roscpp
@@ -100,6 +108,13 @@ target_include_directories(franka_control_node SYSTEM PUBLIC
   ${catkin_INCLUDE_DIRS}
 )
 
+
+
+# Table collision object publisher
+
+include_directories(SYSTEM ${EIGEN3_INCLUDE_DIRS})
+add_executable(robot_base_publisher src/collision_object/robot_base_publisher.cpp)
+target_link_libraries(robot_base_publisher ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 
 

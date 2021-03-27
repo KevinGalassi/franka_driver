@@ -1,6 +1,6 @@
 // Copyright (c) 2017 Franka Emika GmbH
 // Use of this source code is governed by the Apache-2.0 license, see LICENSE
-#include <franka_state_controller.h>
+#include <franka_controllers/franka_state_controller.h>
 
 #include <cmath>
 #include <memory>

@@ -88,7 +88,7 @@
    <joint name="${ns}_object_joint" type="fixed" >
       <parent link="${ns}_hand" />
       <child link="${ns}_object_link" />
-      <origin xyz="0 0 0.155" rpy="0 0 0"/>
+      <origin xyz="0 0 0.167" rpy="0 0 0"/>
       <!-- Base delle dita 0.0584-->
    </joint>
 
@@ -106,11 +106,12 @@
 	   </collision>
    </link>
 
-      <joint name="${ns}_tactile_joint" type="fixed" >
+<!-- TACTILE LINK-->
+   <joint name="${ns}_tactile_joint" type="fixed" >
       <parent link="${ns}_object_link" />
       <child link="${ns}_tactile_link" />
-      <origin xyz="0 0 -0.0125" rpy="${pi/2} 0 0"/>
-      <!-- Base delle dita 0.0584-->
+     <!-- <origin xyz="0 0 0.0" rpy="0 ${3*pi/2} ${pi/2}"/> -->
+     <origin xyz="0 0 0.0" rpy="${pi/2} 0 ${pi}"/>
    </joint>
 
    <link name="${ns}_tactile_link">
@@ -126,6 +127,59 @@
          </geometry>
 	   </collision>
    </link>
+
+
+
+      <joint name="gripper_camera_joint" type="fixed" >
+      <parent link="${ns}_hand" />
+      <child link="gripper_camera" />
+     <!-- <origin xyz="0 0 0.0" rpy="0 ${3*pi/2} ${pi/2}"/> -->
+     <!--origin xyz=" 0.04576 0.00275  0.076854" rpy="0.033641884557 -0.013806793567 1.57762792946"/-->
+    
+     <origin xyz=" 0.04276 -0.00275  0.076854" rpy="0.033641884557 -0.013806793567 1.57762792946"/>
+   </joint>
+
+   <link name="gripper_camera">
+      <visual>
+         <geometry>
+            <box size="0.0 0.00 0.0"/>
+         </geometry>
+	      <material name="silver" />
+      </visual>
+      <collision>
+         <geometry>
+            <box size="0.00 0.00 0.0"/>
+         </geometry>
+	   </collision>
+   </link>
+
+
+
+   <joint name="gripper_camera_visu_joint" type="fixed" >
+      <parent link="gripper_camera" />
+      <child link="gripper_camera_visu" />
+     <origin xyz=" 0.03 0.075 -0.01" rpy="-${pi/2}  0.0 ${pi} "/>
+   </joint>
+
+   <link name="gripper_camera_visu">
+      <visual>
+         <geometry>
+            <mesh filename="package://franka_description/meshes/Fotocamera_gripper.STL" scale="0.001 0.001 0.001"/>
+         </geometry>
+	      <material name="black">
+            <color rgba="0.5 0.5 0.5 1"/>
+         </material>
+      </visual>
+      <collision>
+         <geometry>
+            <box size="0.00 0.00 0.0"/>
+         </geometry>
+	   </collision>
+   </link>
+
+
+
+
 
 
 

@@ -15,9 +15,11 @@
    <arg name="load_joint_velocity"  default="false" />
    <arg name="load_joint_position"  default="false" />
    <arg name="load_cart_velocity"   default="false" />
-   <arg name="load_cart_impedance"  default="true" />
+   <arg name="load_cart_impedance"  default="false" />
    <arg name="load_ex_imp"          default="false" />
 
+   <arg name="load_collision_object" default="true" />
+ 
 
 <!-- Launch the state publisher-->
    <include file="$(find franka_controllers)/launch/franka_state_control.launch">
@@ -92,7 +94,17 @@
    <node pkg="tf2_ros" type="static_transform_publisher" name="virtual_joint_broadcaster_2" args="0.40 0.15 0.031 3.14 0 -1.570 world head_camera" >
       <param name="rate" value="1000"/>
    </node>
+<!--
+   <node pkg="tf2_ros" type="static_transform_publisher" name="camera_frame_broadcaster" args="0.050752 -0.00478 0.123721 0.006648 0.015345 0.722353 0.696318 panda_hand gripper_camera" >
+      <param name="rate" value="1000"/>
+   </node>
+-->
 
 
+
+
+   <group if="$(arg load_collision_object)" >
+      <node pkg="franka_controllers" type="robot_base_publisher" name="robot_base_pub" />
+   </group>
 
 </launch>
