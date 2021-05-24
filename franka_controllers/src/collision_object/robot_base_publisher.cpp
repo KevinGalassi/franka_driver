@@ -39,8 +39,28 @@ int main(int argc, char** argv)
     robot_base.primitive_poses[0].position.y = 0;
     robot_base.primitive_poses[0].position.z = -0.050;
 
+
+    moveit_msgs::CollisionObject switchgear;
+    switchgear.id = "switchgear";
+    switchgear.header.frame_id = "panda_link0";
+
+    switchgear.primitives.resize(1);
+    switchgear.primitives[0].type = switchgear.primitives[0].BOX;
+    switchgear.primitives[0].dimensions.resize(3);
+    switchgear.primitives[0].dimensions[0] = 0.6;
+    switchgear.primitives[0].dimensions[1] = 0.6;
+    switchgear.primitives[0].dimensions[2] = 0.1;
+
+    switchgear.primitive_poses.resize(1);
+    switchgear.primitive_poses[0].position.x = 0.35;
+    switchgear.primitive_poses[0].position.y = 0.30;
+    switchgear.primitive_poses[0].position.z = 0.0;
+
+
     robot_base.operation = robot_base.ADD;
+    switchgear.operation = switchgear.ADD;
     planning_scene_interface.applyCollisionObject(robot_base);
+    planning_scene_interface.applyCollisionObject(switchgear);
 
     ros::spin();
 

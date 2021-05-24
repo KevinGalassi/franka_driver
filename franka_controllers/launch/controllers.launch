@@ -8,8 +8,8 @@
    <arg name="debug" default="false" />
 
    <arg name="load_gripper" value="true" />
-   <arg name="load_tactile" default="true" />
-   <arg name="load_panda"   default="false" />
+   <arg name="load_tactile" default="false" />
+   <arg name="load_panda"   default="true" />
    <arg name="load_schunk"  default="false"/>
 
    <arg name="load_joint_velocity"  default="false" />
@@ -99,7 +99,6 @@
       <param name="rate" value="1000"/>
    </node>
 -->
-
 
 
 

@@ -154,6 +154,56 @@
    </link>
 
 
+   <joint name="realsense_camera_joint" type="fixed" >
+      <parent link="${ns}_hand" />
+      <child link="realsense_optical_frame" />
+     <origin xyz=" -0.04276 -0.00275  0.076854" rpy="0.033641884557 -0.013806793567 1.57762792946"/>
+   </joint>
+
+   <link name="realsense_optical_frame">
+      <visual>
+         <geometry>
+            <box size="0.0 0.00 0.0"/>
+         </geometry>
+	      <material name="silver" />
+      </visual>
+      <collision>
+         <geometry>
+            <box size="0.00 0.00 0.0"/>
+         </geometry>
+	   </collision>
+   </link>
+
+
+
+
+      <joint name="gripper_realsense_joint" type="fixed" >
+      <parent link="${ns}_hand" />
+      <child link="camera_link" />
+
+     <origin xyz=" -0.039278 -0.012625  0.076519" rpy= "${180*pi/180} ${-90*pi/180} 0.0" />
+     <!-- "${-1.049392*pi/180} ${-4.432421*pi/180} ${91.376356*pi/180}" -->
+     <!--"0.033641884557 -0.013806793567 1.57762792946"  -->
+   </joint>
+
+   <link name="camera_link">
+      <visual>
+         <geometry>
+            <box size="0.0 0.00 0.0"/>
+         </geometry>
+	      <material name="silver" />
+      </visual>
+      <collision>
+         <geometry>
+            <box size="0.00 0.00 0.0"/>
+         </geometry>
+	   </collision>
+   </link>
+
+
+
+
+
 
    <joint name="gripper_camera_visu_joint" type="fixed" >
       <parent link="gripper_camera" />
