@@ -28,7 +28,8 @@ $ catkin_make -DCMAKE_BUILD_TYPE=Release -DFranka_DIR:PATH=/path/to/libfranka/bu
 
 ### Launch ###
 
-To activate the controllers use the launch file controllers.launch as root user in a ubuntu version with a rt kernel, the launch file laods all the controllers requested in a stopped mode by chainging the arguent inside the launch file. The online control active by default is the pos_trajectory_joint_interface used by MoveIt. T
+To activate the controllers use the launch file controllers.launch as root user in a ubuntu version with a rt kernel, the launch file loads all the controllers requested in a stopped mode by chainging the arguent inside the launch file. The online control active by default is the pos_trajectory_joint_interface used by MoveIt. With the parameters in the launch file is possible to modify the end effector of the robot to.
+
 
 '''sh
 $ sudo su
@@ -38,7 +39,11 @@ Launch the controllers:
 $ roslaunch franka_controllers controllers.launch
 ```
 
-
+### Simulation ###
+The robot can be also load in a simulation environment using RVIZ, in this simulation are not covered the inertia and contacts, but can be used to test the movement of the robot. The simulation is created using MoveIt
+```sh
+$ roslaunch franka_controllers simulation.launch
+```
 
 
 
@@ -58,6 +63,8 @@ As additional feature, the controller will automatically check if the input resp
 
 # Under development! #
 
-Limit the velocity in the joint position controller
 
+- [ ] Add [Move-RT controller](https://dei-gitlab.dei.unibo.it/lar/move_rt) as a possible high-level trajectory controller.
+- [ ] Limit the velocity in the joint position controller
+- [ ] Add filtering of the input in joint_velcoity_controller
 
