@@ -122,11 +122,6 @@
          </geometry>
 	      <material name="silver" />
       </visual>
-      <collision>
-         <geometry>
-            <box size="0.00 0.00 0.0"/>
-         </geometry>
-	   </collision>
    </link>
 
 
@@ -143,21 +138,16 @@
          </geometry>
 	      <material name="silver" />
       </visual>
-      <collision>
-         <geometry>
-            <box size="0.00 0.00 0.0"/>
-         </geometry>
-	   </collision>
    </link>
 
 
 
 
-      <joint name="gripper_realsense_joint" type="fixed" >
-      <parent link="${ns}_hand" />
-      <child link="camera_link" />
+    <joint name="gripper_realsense_joint" type="fixed" >
+    <parent link="${ns}_hand" />
+    <child link="camera_link" />
 
-     <origin xyz=" -0.039278 -0.012625  0.076519" rpy= "${180*pi/180} ${-90*pi/180} 0.0" />
+    <origin xyz=" -0.039278 -0.012625  0.076519" rpy= "${180*pi/180} ${-90*pi/180} 0.0" />
      <!-- "${-1.049392*pi/180} ${-4.432421*pi/180} ${91.376356*pi/180}" -->
      <!--"0.033641884557 -0.013806793567 1.57762792946"  -->
    </joint>
@@ -169,11 +159,6 @@
          </geometry>
 	      <material name="silver" />
       </visual>
-      <collision>
-         <geometry>
-            <box size="0.00 0.00 0.0"/>
-         </geometry>
-	   </collision>
    </link>
 
 
@@ -196,11 +181,6 @@
             <color rgba="0.5 0.5 0.5 1"/>
          </material>
       </visual>
-      <collision>
-         <geometry>
-            <box size="0.00 0.00 0.0"/>
-         </geometry>
-	   </collision>
    </link>
 
 
