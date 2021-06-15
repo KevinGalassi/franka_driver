@@ -19,6 +19,7 @@
     <disable_collisions link1="panda_hand" link2="panda_leftfinger" reason="Adjacent" />
     <disable_collisions link1="panda_hand" link2="panda_rightfinger" reason="Adjacent" />
     <disable_collisions link1="panda_leftfinger" link2="panda_rightfinger" reason="Default" />
+    <disable_collisions link1="panda_object_link" link2="panda_hand" reason="Default" />
     <disable_collisions link1="panda_object_link" link2="panda_tactile_link" reason="Default" />
 
 

@@ -29,7 +29,6 @@
 
   <!-- <param name="$(arg robot_description)_semantic" command="$(find xacro)/xacro '$(find panda_moveit_config)/config/panda_arm_hand.srdf.xacro'" if="$(arg load_gripper)" /> -->
   <param name="$(arg robot_description)_semantic" command="$(find xacro)/xacro '$(find panda_moveit_config)/config/panda_arm_hand.srdf.xacro'" if="$(arg load_gripper)" />
-  
   <param name="$(arg robot_description)_semantic" command="$(find xacro)/xacro '$(find panda_moveit_config)/config/panda_arm.srdf.xacro'" unless="$(arg load_gripper)" />
 
 
