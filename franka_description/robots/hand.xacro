@@ -87,7 +87,9 @@
     <joint name="${ns}_object_joint" type="fixed" >
       <parent link="${ns}_hand" />
       <child link="${ns}_object_link" />
-      <origin xyz="0 0 0.1034" rpy="0 0 0"/>
+
+      <origin xyz="0 0 0.1274" rpy="0 0 0"/>
+      <!--xyz="0 0 0.1034" rpy="0 0 0" -->  
       <!-- Base delle dita 0.0584-->
    </joint>
 
@@ -111,8 +113,9 @@
       <child link="gripper_camera" />
      <!-- <origin xyz="0 0 0.0" rpy="0 ${3*pi/2} ${pi/2}"/> -->
      <!--origin xyz=" 0.04576 0.00275  0.076854" rpy="0.033641884557 -0.013806793567 1.57762792946"/-->
-    
-     <origin xyz=" 0.04276 -0.00275  0.076854" rpy="0.033641884557 -0.013806793567 1.57762792946"/>
+     <!--origin xyz=" 0.04276 -0.00275  0.076854" rpy="0.033641884557 -0.013806793567 1.57762792946"/-->
+
+     <origin xyz=" 0.04276 0.002  0.065" rpy="0.033641884557 -0.013806793567 1.57762792946"/>
    </joint>
 
    <link name="gripper_camera">
@@ -146,6 +149,7 @@
     <joint name="gripper_realsense_joint" type="fixed" >
     <parent link="${ns}_hand" />
     <child link="camera_link" />
+
 
     <origin xyz=" -0.039278 -0.012625  0.076519" rpy= "${180*pi/180} ${-90*pi/180} 0.0" />
      <!-- "${-1.049392*pi/180} ${-4.432421*pi/180} ${91.376356*pi/180}" -->
